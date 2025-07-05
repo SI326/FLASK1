@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot</title>
+    <style>
+        #chatbox { height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; }
+        .user { color: blue; text-align: right; margin: 5px; }
+        .bot { color: green; text-align: left; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h2>Chat with PyBot</h2>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendMessage()">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+    function sendMessage() {
+        let userText = document.getElementById("userInput").value;
+        if (userText === "") return;
+
+        let chatbox = document.getElementById("chatbox");
+        chatbox.innerHTML += `<div class='user'>You: ${userText}</div>`;
+
+        fetch(`/get?msg=${encodeURIComponent(userText)}`)
+            .then(response => response.json())
+            .then(data => {
+                chatbox.innerHTML += `<div class='bot'>Bot: ${data}</div>`;
+                document.getElementById("userInput").value = "";
+                chatbox.scrollTop = chatbox.scrollHeight;
+            });
+    }
+    </script>
+</body>
+</html>
